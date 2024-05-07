@@ -5,8 +5,7 @@ const pool = new Pool({
 });
 */
 const pg = require('pg');
-const connectionString = process.env.DATABASE_URL || 'postgres://mc_evs:mc_evs@localhost:5432/demo_mc_evs_test';
-connectionString += '?ssl=' + process.env.DATABASE_URL ? 'true' : 'false';
+const connectionString = process.env.DATABASE_URL || 'postgres://mc_evs:mc_evs@localhost:5432/demo_mc_evs_test' + '?ssl=' + process.env.DATABASE_URL ? 'true' : 'false';
 console.log('connectionString',connectionString);
 const client = new pg.Client(connectionString);
 
