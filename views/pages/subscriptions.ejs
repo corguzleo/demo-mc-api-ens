@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+    <h2>Suscriptions Details</h2>
+
+    <ul>
+        <% results.forEach(function(r) { %>
+            <li><%= r.subscriptionid %></li>
+            <li><%= r.subscriptionname %></li>
+            <li><%= r.eventcategorytypes %></li>
+        <% }); %>
+    </ul>
+    <h2>Events Results</h2>
+
+    <table id="tableContent">
+        <tr>
+            <th>Callback</th>
+            <th>Category Type</th>
+            <th>Body</th>
+        </tr>
+        <% resultsEvents.forEach(function(r) { %>
+        <tr>
+            <td><%= r.idcallback %></td>
+            <td><%= r.eventCategoryType %></td>
+            <td><%= r.body %></td>
+        </tr>
+        <% }); %>
+    </table>
+
+
+</div>
+
+</body>
+</html>

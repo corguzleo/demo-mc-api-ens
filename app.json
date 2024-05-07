@@ -1,0 +1,46 @@
+{
+  "name": "Event Notification Service Webhook",
+  "description": "Esta Aplicacion recibe los eventos generados por por el Event Notification Service de Marketing Cloud y los reenvia a un dispacher si esta configurado",
+  "repository": "https://github.com/heroku/node-js-getting-started",
+  "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/main/public/node.svg",
+  "keywords": ["node", "express", "heroku","Salesforce","Marketing Cloud API"],
+  "image": "heroku/nodejs",
+  "addons": [
+    {
+      "plan": "heroku-postgresql",
+      "options": {
+        "version": "16"
+      }
+    }
+  ],
+  "scripts": {
+    "postdeploy": "node database.js"
+  },
+  "env": {
+    "MC_SUBDOMAIN": {
+      "description": "",
+      "value": ""
+    },
+    "MC_GRANT_TYPE": {
+      "description": "",
+      "value": "client_credentials"
+    },
+    "MC_CLIENT_ID": {
+      "description": "",
+      "value": ""
+    },
+    "MC_CLIENT_SECRET": {
+      "description": "",
+      "value": ""
+    },
+    "MC_ACCOUNT_ID": {
+      "description": "",
+      "value": ""
+    },
+    "DISPACHER_URL": {
+      "description": "",
+      "value": "",
+      "required": false
+    }
+  }
+}
