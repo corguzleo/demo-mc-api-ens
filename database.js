@@ -6,9 +6,9 @@ const pool = new Pool({
 */
 const pg = require('pg');
 const connectionString = process.env.DATABASE_URL || 'postgres://mc_evs:mc_evs@localhost:5432/demo_mc_evs_test';
-const connectionStringSSL = process.env.DATABASE_URL ? '?ssl=true&sslmode=require' : '?ssl=false';
+const connectionStringSSL = process.env.DATABASE_URL ? '?ssl=true' : '';
 console.log('connectionString',connectionString+connectionStringSSL);
-const client = new pg.Client(connectionString);
+const client = new pg.Client(connectionString+connectionStringSSL);
 
 
 
@@ -34,9 +34,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS demo_dispachers_pkey ON dispachers_eventos(id 
 CREATE INDEX IF NOT EXISTS dispachers_callbackid_index ON dispachers_eventos(callbackid text_ops); \
 CREATE INDEX IF NOT EXISTS dispachers_idcallback_index ON dispachers_eventos(idcallback int8_ops); \
 ',(err, result) => {   
-    console.log(result);
+    console.log("Termina query");
+    if(err){
+        console.log("Error en query ", err);
+    }
     client.end();
 });
 
-
-    console.log("Termina Postscript");
+console.log("Termina Postscript");
