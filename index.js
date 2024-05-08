@@ -150,7 +150,7 @@ express()
               console.log('callbackItem forwarded');
               request.post({
                 headers: {'content-type' : 'application/json'},
-                url:     process.env.DISPACHER_URL,
+                url:     callbackItem.forwardurl,
                 body:    JSON.stringify(item)
               }, function(error, response, body){
                 console.log('request.post',body);
