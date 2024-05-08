@@ -2,6 +2,8 @@
 
 Esta Aplicacion recibe los eventos generados por por el Event Notification Service de Marketing Cloud y los reenvia a un dispacher si esta configurado.
 
+After deploy the app you need to request(GET) '/app/db/init' to create the DB tables
+
 ## Running Locally
 
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
