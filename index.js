@@ -37,6 +37,59 @@ express()
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
+  .get('/app/db/init',jsonParser, async (req,res) => {
+    try {
+      const client = await pool.connect();
+      console.log('/app/db/init');
+      const result = await client.query('SELECT EXISTS (SELECT 1 FROM   information_schema.tables WHERE  table_name = \'callbacks\')');
+      const results = { 'results': (result) ? result.rows : null};
+      console.log('result',results);
+      let respRequest='';
+      if(result!=null){
+        let item = results.results[0];
+        if(item.exists){
+          respRequest = 'Ya existe la BD';
+          console.log(respRequest);
+        }else{
+          client.query('\
+          CREATE TABLE IF NOT EXISTS callbacks (id SERIAL,callbackid text,verificationkey text,callbackname text NOT NULL,url text,urlforward text,signaturekey text,maxbatchsize bigint,status text,statusreason text,created_at TIMESTAMP DEFAULT NOW()); \
+          CREATE TABLE IF NOT EXISTS subscriptions (id SERIAL,subscriptionid text PRIMARY KEY,subscriptionname text,callbackid text NOT NULL,callbackname text,eventcategorytypes text,filters text,status text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
+          CREATE TABLE IF NOT EXISTS events (id SERIAL PRIMARY KEY,"eventCategoryType" text,eid text,mid text,"senderType" text,"messageType" text,"channelId" text,"messageId" text,"timestampUTC" bigint,"mobileNumber" text,"contactId" text,"messageBody" text,"messageKey" text,status text,reason text,body text,callbackid text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
+          CREATE TABLE IF NOT EXISTS dispachers_eventos (id SERIAL PRIMARY KEY,"eventCategoryType" text,eid text,mid text,"senderType" text,"messageType" text,"channelId" text,"messageId" text,"timestampUTC" bigint,"mobileNumber" text,"contactId" text,"messageBody" text,"messageKey" text,status text,reason text,body text,callbackid text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
+          CREATE INDEX IF NOT EXISTS callbacks_id_index ON callbacks(id int4_ops); \
+          CREATE UNIQUE INDEX IF NOT EXISTS demo_callbacks_pkey ON callbacks(callbackid text_ops); \
+          CREATE UNIQUE INDEX IF NOT EXISTS subscriptions_pkey ON subscriptions(subscriptionid text_ops); \
+          CREATE UNIQUE INDEX IF NOT EXISTS demo_subscriptions_pkey ON subscriptions(subscriptionid text_ops); \
+          CREATE INDEX IF NOT EXISTS subscriptions_callbackid_index ON subscriptions(callbackid text_ops); \
+          CREATE INDEX IF NOT EXISTS subscriptions_status_index ON subscriptions(status text_ops); \
+          CREATE UNIQUE INDEX IF NOT EXISTS events_pkey ON events(id int4_ops); \
+          CREATE INDEX IF NOT EXISTS events_callbackid_index ON events(callbackid text_ops); \
+          CREATE INDEX IF NOT EXISTS events_idcallback_index ON events(idcallback int8_ops); \
+          CREATE UNIQUE INDEX IF NOT EXISTS dispachers_pkey ON dispachers_eventos(id int4_ops); \
+          CREATE UNIQUE INDEX IF NOT EXISTS demo_dispachers_pkey ON dispachers_eventos(id int4_ops); \
+          CREATE INDEX IF NOT EXISTS dispachers_callbackid_index ON dispachers_eventos(callbackid text_ops); \
+          CREATE INDEX IF NOT EXISTS dispachers_idcallback_index ON dispachers_eventos(idcallback int8_ops); \
+          ',(err, result) => {   
+              console.log("Termina query");
+              if(err){
+                  respRequest = err;
+                  console.log("Error en query ", err);
+              }else{
+                respRequest = 'Se creo la BD';
+              }
+              client.end();
+          });
+        }
+      }else{
+        respRequest = 'Error en la consulta la BD';
+        console.log(respRequest);
+      }
+      res.json(respRequest);
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  })
   .get('/callbacks',async (req,res) => {
     try {
       const client = await pool.connect();

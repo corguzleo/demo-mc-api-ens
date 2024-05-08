@@ -13,9 +13,6 @@
       }
     }
   ],
-  "scripts": {
-    "postdeploy": "node database.js"
-  },
   "env": {
     "MC_SUBDOMAIN": {
       "description": "",
