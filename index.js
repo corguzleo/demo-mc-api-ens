@@ -17,7 +17,7 @@ var request = require('request');
 const axios = require('axios');
 
 global.mc_credenciales = {
-  "grant_type": process.env.MC_GRANT_TYPE,
+  "grant_type": 'client_credentials',
   "client_id": process.env.MC_CLIENT_ID,
   "client_secret": process.env.MC_CLIENT_SECRET,
   "account_id": process.env.MC_ACCOUNT_ID,

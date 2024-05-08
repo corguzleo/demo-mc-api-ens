@@ -18,10 +18,6 @@
       "description": "",
       "value": ""
     },
-    "MC_GRANT_TYPE": {
-      "description": "",
-      "value": "client_credentials"
-    },
     "MC_CLIENT_ID": {
       "description": "",
       "value": ""
@@ -33,11 +29,6 @@
     "MC_ACCOUNT_ID": {
       "description": "",
       "value": ""
-    },
-    "DISPACHER_URL": {
-      "description": "",
-      "value": "",
-      "required": false
     }
   }
 }
