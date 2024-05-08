@@ -52,7 +52,7 @@ express()
           console.log(respRequest);
         }else{
           client.query('\
-          CREATE TABLE IF NOT EXISTS callbacks (id SERIAL,callbackid text,verificationkey text,callbackname text NOT NULL,url text,urlforward text,signaturekey text,maxbatchsize bigint,status text,statusreason text,created_at TIMESTAMP DEFAULT NOW()); \
+          CREATE TABLE IF NOT EXISTS callbacks (id SERIAL,callbackid text,verificationkey text,callbackname text NOT NULL,url text,urlforward text,signaturekey text,maxbatchsize bigint,status text,statusreason text,forwardurl text,created_at TIMESTAMP DEFAULT NOW()); \
           CREATE TABLE IF NOT EXISTS subscriptions (id SERIAL,subscriptionid text PRIMARY KEY,subscriptionname text,callbackid text NOT NULL,callbackname text,eventcategorytypes text,filters text,status text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
           CREATE TABLE IF NOT EXISTS events (id SERIAL PRIMARY KEY,"eventCategoryType" text,eid text,mid text,"senderType" text,"messageType" text,"channelId" text,"messageId" text,"timestampUTC" bigint,"mobileNumber" text,"contactId" text,"messageBody" text,"messageKey" text,status text,reason text,body text,callbackid text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
           CREATE TABLE IF NOT EXISTS dispachers_eventos (id SERIAL PRIMARY KEY,"eventCategoryType" text,eid text,mid text,"senderType" text,"messageType" text,"channelId" text,"messageId" text,"timestampUTC" bigint,"mobileNumber" text,"contactId" text,"messageBody" text,"messageKey" text,status text,reason text,body text,callbackid text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
@@ -146,13 +146,16 @@ express()
               eventItemId = results.rows[0].id;
             });
             //Envio a dispacher
-            request.post({
-              headers: {'content-type' : 'application/json'},
-              url:     process.env.DISPACHER_URL,
-              body:    JSON.stringify(item)
-            }, function(error, response, body){
-              console.log('request.post',body);
-            });
+            if(callbackItem.forwardurl){
+              console.log('callbackItem forwarded');
+              request.post({
+                headers: {'content-type' : 'application/json'},
+                url:     process.env.DISPACHER_URL,
+                body:    JSON.stringify(item)
+              }, function(error, response, body){
+                console.log('request.post',body);
+              });
+            }
           }
           res.status(201).send(`Event added with ID: ${eventItemId}`);
         }else{ // Bloque de manejo de solicitudes inesparadas
