@@ -23,12 +23,14 @@
     <table id="tableContent">
         <tr>
             <th>Callback</th>
+            <th>created at</th>
             <th>Category Type</th>
             <th>Body</th>
         </tr>
         <% resultsEvents.forEach(function(r) { %>
         <tr>
             <td><%= r.idcallback %></td>
+            <td><%= r.created_at %></td>
             <td><%= r.eventCategoryType %></td>
             <td><%= r.body %></td>
         </tr>
