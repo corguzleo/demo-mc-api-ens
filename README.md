@@ -34,11 +34,11 @@ or
 
 ## How to Use it
 
-Before you deploy de app, you need to provide this enviroment variables
-MC_SUBDOMAIN
-MC_CLIENT_ID
-MC_CLIENT_SECRET
-MC_ACCOUNT_ID
+Before you deploy de app, you need to provide this enviroment variables to loging to MC:<br>
+MC_SUBDOMAIN<br>
+MC_CLIENT_ID<br>
+MC_CLIENT_SECRET<br>
+MC_ACCOUNT_ID<br>
 
 You can view the details [here](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/ens-get-started.html)
 
