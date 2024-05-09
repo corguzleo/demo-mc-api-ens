@@ -58,6 +58,7 @@ express()
           CREATE TABLE IF NOT EXISTS subscriptions (id SERIAL,subscriptionid text PRIMARY KEY,subscriptionname text,callbackid text NOT NULL,callbackname text,eventcategorytypes text,filters text,status text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
           CREATE TABLE IF NOT EXISTS events (id SERIAL PRIMARY KEY,"eventCategoryType" text,eid text,mid text,"senderType" text,"messageType" text,"channelId" text,"messageId" text,"timestampUTC" bigint,"mobileNumber" text,"contactId" text,"messageBody" text,"messageKey" text,status text,reason text,body text,callbackid text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
           CREATE TABLE IF NOT EXISTS dispachers_eventos (id SERIAL PRIMARY KEY,"eventCategoryType" text,eid text,mid text,"senderType" text,"messageType" text,"channelId" text,"messageId" text,"timestampUTC" bigint,"mobileNumber" text,"contactId" text,"messageBody" text,"messageKey" text,status text,reason text,body text,callbackid text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
+          CREATE TABLE IF NOT EXISTS events_general (id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,body text,created_at TIMESTAMP DEFAULT NOW());\
           CREATE INDEX IF NOT EXISTS callbacks_id_index ON callbacks(id int4_ops); \
           CREATE UNIQUE INDEX IF NOT EXISTS demo_callbacks_pkey ON callbacks(callbackid text_ops); \
           CREATE UNIQUE INDEX IF NOT EXISTS subscriptions_pkey ON subscriptions(subscriptionid text_ops); \
@@ -71,6 +72,7 @@ express()
           CREATE UNIQUE INDEX IF NOT EXISTS demo_dispachers_pkey ON dispachers_eventos(id int4_ops); \
           CREATE INDEX IF NOT EXISTS dispachers_callbackid_index ON dispachers_eventos(callbackid text_ops); \
           CREATE INDEX IF NOT EXISTS dispachers_idcallback_index ON dispachers_eventos(idcallback int8_ops); \
+          CREATE UNIQUE INDEX IF NOT EXISTS events_general_pkey ON events_general(id int4_ops); \
           ',(err, result) => {   
               console.log("Termina query");
               if(err){
@@ -117,6 +119,36 @@ express()
     } catch (err) {
       console.error(err);
       res.send("Error " + err);
+    }
+  })
+  .get('/events',async (req,res) => {
+    try {
+      const client = await pool.connect();
+      const result = await client.query('SELECT * FROM events_general ORDER BY id DESC');
+      const results = { 'results': (result) ? result.rows : null};
+      res.render('pages/events',results);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  })
+  .post('/events',jsonParser, async (req,res) => {
+    try {
+      const client = await pool.connect();
+      console.log('req.body',req.body);
+      client.query('INSERT INTO events_general (body) VALUES ($1) RETURNING id', [req.body], (error, results) => {
+        //console.log(results,error);
+        if (error) {
+          throw error
+        }
+      });
+      res.status(201).send(`events_general added`);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+      client.release();
     }
   })
   .post('/callbacks/:idcb',jsonParser, async (req,res) => {

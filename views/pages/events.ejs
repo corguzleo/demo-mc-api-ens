@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+  <div class="container">
+    <h2>Events Results</h2>
+
+    <table id="tableContent">
+      <tr>
+          <th>Created at</th>
+          <th>Body</th>
+      </tr>
+      <% results.forEach(function(r) { %>
+      <tr>\
+          <td><%= r.created_at %></td>
+          <td><%= r.body %></td>
+      </tr>
+      <% }); %>
+    </table>
+
+  </div>
+
+</body>
+</html>
