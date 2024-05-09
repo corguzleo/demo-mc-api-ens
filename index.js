@@ -111,7 +111,7 @@ express()
       const result = await client.query('SELECT * FROM subscriptions WHERE idcallback=$1 ORDER BY id DESC',[req.params.idcb]);
       const resultEvents = await client.query('SELECT * FROM events WHERE idcallback=$1 ORDER BY id DESC',[req.params.idcb]);
       const results = { 'results': (result) ? result.rows : null, 'resultsEvents': (resultEvents) ? resultEvents.rows : null};
-      console.log('results',results);
+      //console.log('results',results);
       res.render('pages/subscriptions',results);
       client.release();
     } catch (err) {
@@ -282,26 +282,6 @@ express()
       client.query('UPDATE callbacks SET status=$1 WHERE id=$2',['active',item.id]);
       res.json(respItem);
       client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error " + err);
-    }
-  })
-  .get('/api/callback/test',jsonParser, async (req,res) => {
-    try {
-      var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-      console.log(fullUrl);
-      res.json(fullUrl);
-    } catch (err) {
-      console.error(err);
-      res.send("Error " + err);
-    }
-  })
-  .get('/api/callback/testlogin',jsonParser, async (req,res) => {
-    try {
-      //let respRequest = await makeRestCall('GET','http://localhost:5001/api/callback',{},null);
-      let respRequest = await getOauthAccessToken();
-      res.json(respRequest);
     } catch (err) {
       console.error(err);
       res.send("Error " + err);

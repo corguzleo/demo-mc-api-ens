@@ -2,8 +2,6 @@
 
 Esta Aplicacion recibe los eventos generados por por el Event Notification Service de Marketing Cloud y los reenvia a un dispacher si esta configurado.
 
-After deploy the app you need to request(GET) '/app/db/init' to create the DB tables
-
 ## Running Locally
 
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
@@ -33,4 +31,24 @@ $ heroku open
 or
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+## How to Use it
+
+Before you deploy de app, you need to provide this enviroment variables
+MC_SUBDOMAIN
+MC_CLIENT_ID
+MC_CLIENT_SECRET
+MC_ACCOUNT_ID
+
+You can view the details [here](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/ens-get-started.html)
+
+After deploy the app you need to request(GET) '/app/db/init' to create the DB tables
+
+The app has a menu, to start the process: 
+- Click in Callbacks
+- In the top of the list write a unique name for a new callback and click "Crear"
+- After created the Callback, you need to send it to MC by clicking the button "Send to MC"
+- When the callback is sended to MC, the next step is Verify the service by clicking the button "Verify"
+- With the callback verified, you need to subscribe to the events by clicking the button "Subscription"
+- Now you can check the callback events by clicking in the callback name
 
