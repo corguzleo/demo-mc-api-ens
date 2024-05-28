@@ -52,10 +52,10 @@ express()
       //const result = await client.query('SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = \'callbacks\')');
       const result = await client.query(`SELECT table_name FROM information_schema.tables WHERE table_name IN ('callbacks','subscriptions','events','dispachers_eventos','events_general','conversaciones','webhooks','webhookevents')`);
       const results = { 'results': (result) ? result.rows : null};
-      //console.log('result',results);
+      console.log('result',result.rows.length,result.rows.length!=8,results);
       let respRequest='';
-      if(result.rows.length==8){
-        client.query('\
+      if(result.rows.length!=8){
+        const initdb = await client.query('\
         CREATE TABLE IF NOT EXISTS callbacks (id SERIAL,callbackid text,verificationkey text,callbackname text NOT NULL,url text,urlforward text,signaturekey text,maxbatchsize bigint,status text,statusreason text,created_at TIMESTAMP DEFAULT NOW()); \
         CREATE TABLE IF NOT EXISTS subscriptions (id SERIAL,subscriptionid text PRIMARY KEY,subscriptionname text,callbackid text NOT NULL,callbackname text,eventcategorytypes text,filters text,status text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
         CREATE TABLE IF NOT EXISTS events (id SERIAL PRIMARY KEY,"eventCategoryType" text,eid text,mid text,"senderType" text,"messageType" text,"channelId" text,"messageId" text,"timestampUTC" bigint,"mobileNumber" text,"contactId" text,"messageBody" text,"messageKey" text,status text,reason text,body text,callbackid text,idcallback bigint,created_at TIMESTAMP DEFAULT NOW()); \
@@ -84,17 +84,18 @@ express()
         CREATE UNIQUE INDEX IF NOT EXISTS webhookevent_pkey ON webhookevents(id int4_ops); \
         CREATE INDEX IF NOT EXISTS webhookevent_uuid ON webhookevents(uuid text_ops); \
         SELECT table_name FROM information_schema.tables WHERE table_name IN (\'callbacks\',\'subscriptions\',\'events\',\'dispachers_eventos\',\'events_general\',\'conversaciones\',\'webhooks\',\'webhookevents\');\
-        ',(err, result) => {   
+        ');
+        if(initdb){ 
             console.log("Termina query");
-            results.results = result[result.length-1].rows;
-            if(err){
-                respRequest = err;
-                console.log("Error en query ", err);
-            }else{
-              respRequest = 'Se creo la BD';
-            }
+            results.results = initdb[initdb.length-1].rows;
+            console.log('results.results',results.results);
+            console.log('Se creo la BD');
             client.end();
-        });
+        }else{
+          console.log("Error en query ", initdb);
+        }
+      }else{
+        console.log('Ya existe la BD');
       }
       res.render('pages/dbInit',results);
     } catch (err) {
