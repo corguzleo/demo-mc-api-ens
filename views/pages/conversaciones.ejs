@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+  <!--meta http-equiv="refresh" content="30"-->
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+  <div class="container">
+    <h2>Conversaciones Results</h2>
+
+    <table id="tableContent" class="display nowrap" style="width:100%">
+      <thead>
+      <tr>
+          <th>SenderID</th>
+          <th>ContactKey</th>
+          <th>to</th>
+          <th>tipoMensaje</th>
+          <th>TelefonoCliente</th>
+          <th>TimestampUTC</th>
+          <th>Created at</th>
+          <th>contactId</th>
+          <th>eid</th>
+          <th>mid</th>
+          <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% results.forEach(function(r) { %>
+      <tr>
+        <td><%= r.senderID %></td>
+        <td><%= r.contactKey %></td>
+        <td><%= r.to %></td>
+        <td><%= r.tipoMensaje %></td>
+        <td><%= r.telefonoCliente %></td>
+        <td><%= r.timestampUTC %></td>
+        <td><%= r.created_at.toISOString() %></td>
+        <td><%= r.contactId %></td>
+        <td><%= r.eid %></td>
+        <td><%= r.mid %></td>
+        <td><%= r.message %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+    </table>
+
+  </div>
+<script>
+    $(document).ready( function () {
+        new DataTable('#tableContent', {
+            paging: false,
+            rowGroup: {
+                dataSrc: 4
+            },
+            order:[
+              [6,'asc']
+            ],
+            orderFixed: {
+              pre: [4, 'asc']
+            },
+            layout: {
+                top1: 'searchBuilder'
+            }
+        });
+        
+    });
+</script>
+</body>
+</html>

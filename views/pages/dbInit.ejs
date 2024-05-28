@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+<h2>Database Results 8 Tables == OK</h2>
+
+<ol>
+    <% results.forEach(function(r) { %>
+        <li><%= r.table_name %></li>
+    <% }); %>
+</ol>
+
+</div>
+
+</body>
+</html>

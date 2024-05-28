@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include ("../partials/header.ejs") %>
+    <%- include ("../partials/styles.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+  <div class="container">
+    <h2>Events Results</h2>
+
+    <table id="tableContent">
+      <tr>
+          <th style="width: 300px;">Acciones</th>
+          <th>Body</th>
+      </tr>
+      <tr>
+          <td>
+            Definition "definitionKey": <br/>
+            <input type="text" id="definitionKey" value="demo_teco12345">
+            <button type="button" id="btnGetdefinitionByKey">Get Definition</button>
+        </td>
+          <td>
+            <span id="definitionKeyResp"></span>
+        </td>
+      </tr>
+      <tr>
+          <td>
+            Content "customerKey": <br/>
+            <input type="text" id="contentCustomerKey" value="">
+            <button type="button" id="btnGetContentByCustomerKey">Get Content</button>
+        </td>
+          <td>
+            <span id="contentCustomerKeyRespMessage"></span>
+            <span id="contentCustomerKeyRespParams"></span>
+        </td>
+      </tr>
+      <tr>
+          <td>
+            Valida Content "message": <br/>
+            <span id="contentParams">
+                <!-- Codigo generado con llamada de content-->
+            </span>
+            <button type="button" id="btnValidateMessage" >Validate message</button>
+            
+        </td>
+          <td>
+            <span id="contentValidaMessaage"></span>
+            <span id="contentMessaageResp"></span>
+        </td>
+      </tr>
+      <tr>
+          <td>
+            Send "message": <br/><br/>
+            definitionKey: <input type="text" id="ottmsg_definitionKey" value="" disabled><br/>
+            contactKey: <input type="text" id="ottmsg_contactKey" value="jlitman@salesforce.com"><br/>
+            to: <input type="text" id="ottmsg_to" value="525527281138"><br/>
+            messageKey: <input type="text" id="ottmsg_messageKey" value="" disabled><br/>
+            attributes: <span id="ottmsg_attibutes"></span><br/>
+            
+            <button type="button" id="btnSendMessage" disabled>Send message</button>
+        </td>
+          <td>
+            <span id="sendMessageVal"></span>
+        </td>
+      </tr>
+      <tr>
+          <td>
+            Send "event": <br/><br/>
+            Event body: <input type="text" id="event_body" value="" ><br/>
+        
+            
+            <button type="button" id="btnSendEvent" >Send event</button>
+        </td>
+          <td>
+            <span id="sendMessageResp"></span>
+        </td>
+      </tr>
+
+
+      
+    </table>
+
+  </div>
+
+  <script>
+    $(document).ready(function(){
+    
+      $(document).ajaxSend(function() {
+        $("#overlay").fadeIn(300);　
+      });
+      
+      $(":input").on("keypress", function (event) { 
+        var keyPressed = event.keyCode || event.which; 
+        if (keyPressed === 13) { 
+            event.preventDefault(); 
+            return false; 
+        }
+      }); 
+  
+      $("#btnGetdefinitionByKey").click(function(){
+        definitionkey = $('#definitionKey').val();
+        console.log('definitionkey',definitionkey);
+        $.get( "../messaging/v1/ott/definitions/"+definitionkey, function( resp ) {
+          console.log( resp );
+          
+          $("#definitionKeyResp").html(JSON.stringify(resp.data) + '<br/>');
+          //c52f62eb-3400-4296-88b9-92fe8e41fa24
+          if(resp.status!='error'){
+            $('#contentCustomerKey').val(resp.data.content.customerKey);
+            $('#ottmsg_definitionKey').val(definitionkey);
+            $("#btnGetContentByCustomerKey").click();
+          }
+          $("#overlay").fadeOut(300);
+          //location.reload(true);
+        });
+      });
+
+      $("#btnGetContentByCustomerKey").click(function(){
+        cck = $('#contentCustomerKey').val();
+        console.log('cck',cck);
+        $.get( "../asset/v1/content/assets/"+cck, function( resp ) {
+          console.log( resp );
+          $('#contentParams').html('');
+          
+          let display_message = resp.data.items[0].views.whatsapptemplate.meta.options.customBlockData['display:message'] + '<br/>';
+          let display_message_parameters = ''
+          $.each(resp.data.items[0].views.whatsapptemplate.meta.options.customBlockData['display:message:parameters'], function (key, data) {
+            display_message_parameters += data['display:argument:name'] + ' = ' + data['display:argument'] + '<br/>';
+            $('#contentParams').append(
+                data['display:argument:name'] + 
+                ':' + 
+                data['display:argument'].replaceAll('%','') + 
+                ' <input type="text" class="contentparams" data-argument-name="' + data['display:argument:name'] + '" name="' + data['display:argument'].replaceAll('%','') + '"><br/>');
+          });
+          $("#contentCustomerKeyRespMessage").html(display_message + '<br/>');
+          $("#contentCustomerKeyRespParams").html(display_message_parameters + '<br/>');
+          
+          
+          $("#overlay").fadeOut(300);
+          //location.reload(true);
+        });
+      }); 
+
+      $("#btnValidateMessage").click(function(){
+        var msgText = $("#contentCustomerKeyRespMessage").text();
+        $('.contentparams').each(function(index,item){ 
+            msgText = msgText.replace('${' + this.attributes['data-argument-name'].value + '}',this.value);
+        });
+        $("#contentValidaMessaage").text(msgText);
+        $("#ottmsg_messageKey").val(randomIntFromInterval(1000000, 9000000));
+        $("#btnSendMessage").attr("disabled", false);
+      });
+      
+      $("#btnSendMessage").click(function(){ 
+        $("#btnSendMessage").attr("disabled", true);
+
+        var postBodyMessage = {
+            "definitionKey": $("#ottmsg_definitionKey").val(),
+            "recipients": [
+              {
+                "contactKey": $("#ottmsg_contactKey").val(),
+                "to": $("#ottmsg_to").val(),
+                "messageKey": $("#ottmsg_messageKey").val(),
+                "attributes": {}
+              }
+            ]
+        };
+
+        $('.contentparams').each(function(index,item){ 
+            postBodyMessage.recipients[0].attributes[this.name] = this.value;
+        });
+
+        sentToEventosGenerales(JSON.stringify(postBodyMessage));
+        $("#sendMessageVal").text(JSON.stringify(postBodyMessage));
+        
+        $("#btnSendMessage").attr("disabled", false);
+        $("#overlay").fadeOut(300);
+      });
+
+      $("#btnSendEvent").click(function(){ 
+        var postBodyMessage = $("#event_body").val() || $("#sendMessageVal").val();
+        console.log('send event');
+        sentToEventosGenerales(postBodyMessage);
+        $("#overlay").fadeOut(300);
+      });
+
+  
+    });
+    function randomIntFromInterval(min, max) { // min and max included 
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function sentToEventosGenerales(postBodyMessage){
+        console.log('postBodyMessage',postBodyMessage);
+        $.ajax({
+            type: 'POST',
+            url: '../events',
+            data: postBodyMessage,
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
+                // do something iwth the result of the AJAX call here
+                console.log( 'result',result );
+            }
+        });
+    }
+  </script>
+  
+
+
+</body>
+</html>
