@@ -2,6 +2,7 @@
 <html>
 <head>
   <%- include ("../partials/header.ejs") %>
+  <meta http-equiv="refresh" content="30">
 </head>
 
 <body>
@@ -11,20 +12,28 @@
   <div class="container">
     <h2>Events Results</h2>
 
-    <table id="tableContent">
+    <table id="tableContent" class="display">
+      <thead>
       <tr>
           <th>Created at</th>
           <th>Body</th>
       </tr>
+    </thead>
+    <tbody>
       <% results.forEach(function(r) { %>
       <tr>
           <td><%= r.created_at %></td>
           <td><%= r.body %></td>
       </tr>
       <% }); %>
+    </tbody>
     </table>
 
   </div>
-
+<script>
+  $(document).ready( function () {
+    $('#tableContent').DataTable();
+  } );
+</script>
 </body>
 </html>

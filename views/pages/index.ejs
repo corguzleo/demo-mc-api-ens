@@ -22,13 +22,43 @@
     <div class="col-md-6">
       <h3><span class="glyphicon glyphicon-info-sign"></span> How this sample app works</h3>
       <ul>
-        <li>This app was deployed to Heroku..</li>
+        <li>La aplicacion maneja el login con el API de MC, al crear el app se tienen que settear las variables de entorno MC_SUBDOMAIN, MC_CLIENT_ID, MC_CLIENT_SECRET, MC_ACCOUNT_ID</li>
+        <li>Al crear la aplicacion, se proviciona la BD de postgres Basica, se deben de crear las tablas para la aplicacion. Con dar clic en el menu <a href="/app/db/init" >Init DB</a> Si se muestran 8 tablas, la app esta lista para usar.</li>
+        <li>El API de Event Notification Service requiere de un webhook a donde enviar los eventos, en MC hay que crear un Callback que envie los eventos al webhook de esta app.
+          <ol> 
+            <li>Entre en el menu <a href="/callbacks" >Callbacks</a> y en el formulario agregue un nombre y presione crear una vez actualizada la lista de callback, Presione el boton <b>Send to MC</b></li>
+            <li>Al recibir MC el callback, requiere verificacion del webhook. En el Callback creado, presione el boton <b>Verify</b></li>
+            <li>Una vez verificado el webhook, se tiene que seleccionar los eventos que se enviaran, para efectos de demo, presione el boton <b>Subscription</b> que agregara los eventos disponibles</li>
+            <li>Cuando el Callback este marcado como <b>active</b> en la columna de estatus, de click en el nombre del Callback para ver eventos que lleguen desde MC </li>
+            <li>(Opcional) Si se agrega en la tabla de callbaks el parametro urlforward, todos los eventos seran reenviados por POST a la url asignada</li>
+          </ol>
+        </li>
+        <li>Si los eventos enviados son de senderType=='WhatsApp', ya sea un Botton o texto, se envia el mensaje a la tabla de <a href="/conversaciones" >conversaciones</a>
+          <ol>
+            <li>Puede buscar en las conversaciones con el <b>Custom Search Builder</b> o con la caja de texto <b>Search</b> general</li>
+          </ol>
+        </li>
+        <li>Para el envio de mensajes Salientes de WhatsApp, se puede consumir el API por el metodo POST $(url-host-app)/messaging/v1/ott/messages
+          <ol>
+            <li>El mesaje debe apegarse a la definicion de <a href="https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/sendMessageMultipleRecipients.html">sendMessageMultipleRecipients</a> del API de MC</li>
+            <li>Para el seguimiento de la conversacion, el API busca el template definido en los mensajes entrantes, sustituye las variables del template con las del mensaje y envia envia el mensaje completo a la tabla de <a href="/conversaciones" >conversaciones</a></li>
+            <li>Todos los mensajes que llegan al API se reenvian a la tabla <a href="/events">Eventos API Messaging</a></li>
+          </ol>
+        </li>
       </ul>
     </div>
     <div class="col-md-6">
       <h3><span class="glyphicon glyphicon-link"></span> Next Steps</h3>
       <ul>
-        <li>If you are following..</li>
+        <li>Si se quiere validar que el contenido de los mesnajes del API se creen correctamente utilice el menu <a href="/messaging">Test Messaging</a> 
+          <ol>
+            <li>Escriba el <b>Definition "definitionKey":</b> y presione el boton <b>Get Definition</b>. Consultara a MC para obtener el <b>Content "customerKey":</b></li>
+            <li>Si conoce el <b>Content "customerKey":</b> puede escribirlo en la caja de texto u presionar <b>Get Content</b></li>
+            <li>Se mostrara el mensaje del template y las vatiables que necesitan incluir para el envio. Llene las cajas de texto de los parametros que requiere el template(los parametros son dinamicos pueden ser 1 o n) y presione <b>Validate message</b></li>
+            <li>Valide qie el mensaje es correcto y presione <b>Send message</b></li>
+            <li>(Opcional) Si tiene el mensaje JSON para validar, puede ponerlo en el campo <b>Event body:</b> y dar click en <b>Send event</b></li>
+          </ol>
+        </li>
       </ul>
     </div>
   </div> <!-- row -->
