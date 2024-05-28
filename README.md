@@ -31,9 +31,9 @@ Esta Aplicacion recibe los eventos generados por por el Event Notification Servi
 
 ### Flows
 
-![Setup Callback](https://github.com/corguzleo/demo-mc-api-ens/blob/main/public/images/01 Setup Callback.png?raw=true)
-![MSGs Inbound](https://github.com/corguzleo/demo-mc-api-ens/blob/main/public/images/02 ENS MSGs Inbound.png?raw=true)
-![MSGs Outbound](https://github.com/corguzleo/demo-mc-api-ens/blob/main/public/images/03 API MSGs Outbound.png?raw=true)
+![Setup Callback](https://raw.githubusercontent.com/corguzleo/demo-mc-api-ens/main/public/images/01-Setup-Callback.png)
+![MSGs Inbound](https://raw.githubusercontent.com/corguzleo/demo-mc-api-ens/main/public/images/02-ENS-MSGs-Inbound.png?raw=true)
+![MSGs Outbound](https://raw.githubusercontent.com/corguzleo/demo-mc-api-ens/main/public/images/03-API-MSGs-Outbound.png?raw=true)
 ## Running Locally
 
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
